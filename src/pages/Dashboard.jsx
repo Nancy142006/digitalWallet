@@ -16,6 +16,7 @@ function Dashboard() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [activeSection, setActiveSection] = useState("dashboard");
+    const [refreshTrigger, setRefreshTrigger] = useState(0); 
   const navigate = useNavigate();
 
   // effect depends on navigate, meaning if navigate changes, the effect runs again
@@ -67,7 +68,7 @@ function Dashboard() {
 
   return (
     <>
-      <Navbar setActiveSection={setActiveSection} userId={user?._id} />
+      <Navbar setActiveSection={setActiveSection} userId={user?._id} refreshTrigger={refreshTrigger} />
 
       {activeSection === "sendMoney" ? (
         <SendMoney
@@ -79,7 +80,7 @@ function Dashboard() {
       ) : activeSection === "transactionHistory" ? (
         <TransactionHistory setActiveSection={setActiveSection} />
       ) : activeSection ==="profileSettings" ? (
-        <ProfileSettings userId={user?._id}/>
+        <ProfileSettings userId={user?._id} onProfileUpdate={()=> setRefreshTrigger((prev)=> prev+1)}/>
       ) : (
         // Default Dashboard View
         <div className="dashboard-container">

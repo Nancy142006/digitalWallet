@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../styles/profile.css"
 
-function ProfileSettings({ userId }) {
+function ProfileSettings({ userId, onProfileUpdate }) {
   const [name, setName] = useState("");
-  const [profilePicture, setProfilePicture] = useState("null");
+  const [profilePicture, setProfilePicture] = useState(null);
   const [preview, setPreview] = useState(null);
 
   const handleFileChange = (e) => {
@@ -20,34 +20,41 @@ function ProfileSettings({ userId }) {
       formData.append("profilePicture", profilePicture);
     }
 
-    try{
-        const response = await axios.put(
-            `http://localhost:5000/api/update-profile/${userId}`,
-            formData,
-            {headers: {"Content-Type": "multipart/form-data"}}
-        );
-        alert("Profile updated sucessfully");
-        window.location.reload();
-    }catch(error){
-        console.error("Error updating profile:", error);
+    try {
+      await axios.put(
+        `http://localhost:5000/api/update-profile/${userId}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      alert("Profile updated successfully");
+      onProfileUpdate(); // ✅ Notify Navbar to refresh
+    } catch (error) {
+      console.error("Error updating profile:", error);
     }
   };
 
-  return(
+  return (
     <div className="profile-settings-container">
-        <h2>Update Profile</h2>
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>New Name:</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)}/>
-            </div>
-            <div>
-                <label>Profile Picture</label>
-                <input type="file" onChange={handleFileChange}/>
-                {preview && <img src={preview} alt="Preview" width="100"/>}
-            </div>
-            <button type="submit">Update</button>
-        </form>
+      <h2>Update Profile</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>New Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Profile Picture:</label>
+          <input type="file" onChange={handleFileChange} />
+          {preview && <img src={preview} alt="Preview" width="100" />}
+        </div>
+        <button type="submit">Update</button>
+      </form>
     </div>
   );
 }

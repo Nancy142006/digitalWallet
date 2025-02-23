@@ -3,25 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/navbar.css";
 
-function Navbar({ setActiveSection, userId }) {
+function Navbar({ setActiveSection, userId, refreshTrigger }) {
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(true);
   const [user, setUser] = useState(null);
-  let lastScrollY = window.scrollY;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setVisible(false); // Hide when scrolling down
-      } else {
-        setVisible(true); // Show when scrolling up
-      }
-      lastScrollY = window.scrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,23 +13,24 @@ function Navbar({ setActiveSection, userId }) {
         const response = await axios.get(
           `http://localhost:5000/api/user/${userId}`
         );
-        setUser(response.data);
+        setUser(response?.data?.user);
+        alert("response:", response);
       } catch (error) {
         console.error("Error fetching user", error);
       }
     };
 
     if (userId) fetchUser();
-  }, [userId]);
+  }, [userId, refreshTrigger]); // ✅ Re-fetch when refreshTrigger updates
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token
-    navigate("/login"); // Redirect to login
+    localStorage.removeItem("token");
+    navigate("/login");
     window.location.reload();
   };
 
   return (
-    <nav className={`navbar ${visible ? "visible" : "hidden"}`}>
+    <nav className="navbar">
       <div className="Head">
         <h1>💰 Digital Wallet</h1>
       </div>
@@ -72,23 +57,15 @@ function Navbar({ setActiveSection, userId }) {
           </button>
         </li>
         <li>
-          <button
-            className="click"
-            onClick={() => setActiveSection("profileSettings")}
-          >
-            Profile Settings
-          </button>
-        </li>
-        <li>
           <img
             src={
-              user?.profilePicture
-                ? `http://localhost:5000/uploads/${user.profilePicture}`
+              user
+                ? `http://localhost:5000/${user.profilePicture}`
                 : "/default-avatar.png"
             }
             alt="Profile"
             className="profile-avatar"
-            onClick={() => setActiveSection("profileSettings")} // Click avatar to go to settings
+            onClick={() => setActiveSection("profileSettings")}
             style={{ cursor: "pointer" }}
           />
         </li>
