@@ -1,0 +1,47 @@
+.sendmoney-container {
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+  position: absolute;
+  top:50% ;
+  left:50% ;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sendmoney-container h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.sendmoney-container input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+
+.sendmoney-container button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.sendmoney-container button:hover {
+  background-color: #0056b3;
+}

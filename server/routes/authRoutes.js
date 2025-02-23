@@ -50,4 +50,41 @@ router.post("/login", async(req,res)=>{
     }
 });
 
+// Dashboard Route (Protected)
+// defines an HTTP GET route at the endpoint
+// an asynchronous function because it interacts with a database and performs token verification, which are asynchronous operations.
+ router.get("/dashboard" /*endpoint*/, async (req, res) => {
+    try {
+        // Get token from request headers
+        /* NOTE: splits the Authorization header string into an array based
+        on the space " " and then retrieves the second part([1]index)*/
+        const token = req.headers.authorization /*retrieves the authorization header*/
+          ?./*ensures that if authorization is undefines or null it won't throw an error*/split(" ")[1]; //extracts the token from bearer token 
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized: No token provided" });
+        }
+
+        // Verify the token
+        const decoded = jwt.verify/*check if the token is valid*/(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId).select("-password"); // Exclude password
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // response handling 
+        res.json({
+            user,
+            balance: user.balance, // Placeholder balance, replace with actual balance from DB
+        });
+    } 
+    
+    // error handling
+    catch (error) {
+        console.error("Error in Dashboard Route:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+
 module.exports= router;

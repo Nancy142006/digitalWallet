@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/login.css"
 
@@ -8,6 +8,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -17,9 +18,10 @@ function Login() {
   try {
     const response = await axios.post /*sends a post request to backend server*/ ("http://localhost:5000/api/login", { email, password }); /*sends email and password as request data*/
   // backend sends a response in json format { "message": "login successfull", "token": "hdfsbc"}
-    setMessage(response.data.message);
+   console.log("Login API Response", response.data);
     // stores the jwt token in localstorage so that the user remains logged in
     localStorage.setItem("token", response.data.token);
+    navigate("/dashboard");
   } catch (error) {
     setMessage(error.response?.data?.message || "Login failed");
   } finally {

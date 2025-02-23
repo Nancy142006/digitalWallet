@@ -1,0 +1,56 @@
+/* Profile Settings Container */
+.profile-settings-container {
+  max-width: 400px;
+  margin: 80px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Title */
+.profile-settings-container h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Form Inputs */
+.profile-settings-container input[type="text"],
+.profile-settings-container input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Update Button */
+.profile-settings-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.profile-settings-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Profile Picture Preview */
+.profile-preview {
+  margin-top: 10px;
+}
+
+.profile-preview img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff;
+}

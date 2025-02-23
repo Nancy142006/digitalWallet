@@ -22,7 +22,7 @@ function Signup() {
         password,
       });
       setMessage(response.data.message);
-      setTimeout(() => navigate("/login"), 2000); // Redirect after success
+      setTimeout(() => navigate("/login"), 1000); // Redirect after success
     } catch (error) {
       setMessage(error.response?.data?.message || "Signup failed");
     } finally {

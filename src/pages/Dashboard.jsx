@@ -2,13 +2,20 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
+import "../styles/dashboard.css";
+import { FaMoneyBillWave, FaPiggyBank } from "react-icons/fa";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
+import Navbar from "../components/Navbar";
+import Deposit from "./Deposit";
+import SendMoney from "./SendMoney";
+import TransactionHistory from "./TransactionHistory";
+import ProfileSettings from "./ProfileSettings";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
-  const [transactions, setTransactions] = useState([]);
+  const [activeSection, setActiveSection] = useState("dashboard");
   const navigate = useNavigate();
 
   // effect depends on navigate, meaning if navigate changes, the effect runs again
@@ -19,7 +26,7 @@ function Dashboard() {
         const token = localStorage.getItem("token");
         // checking if Token Exists
         if (!token) {
-          // navigate("/login");
+          navigate("/login");
           return; //stops further execution
         }
 
@@ -38,12 +45,13 @@ function Dashboard() {
         );
 
         // storing the response data
+        // console.log("Dashboard API Response", response.data);
         setUser(response.data.user);
         setBalance(response.data.balance);
-        setTransactions(response.data.transactions);
+        // setTransactions(response.data.transactions);
       } catch (error) {
         console.error("Error fetching dashboard:", error);
-        // navigate("/login");
+        navigate("/login");
       }
     };
 
@@ -51,32 +59,60 @@ function Dashboard() {
     fetchDashboard();
   }, [navigate]);
 
+  // const handleLogout = () => {
+  //   localStorage.removeItem("token"); // Remove token from localStorage
+  //   navigate("/login"); // Redirect user to the login page
+  //   window.location.reload(); //Ensures clean logout
+  // };
+
   return (
     <>
-      <Header />
-      <div className="dashboard-container">
-        <h1>Welcome, {user?.name} 👋</h1>
-        <p>Email: {user?.email}</p>
-        <p>Wallet ID: {user?._id}</p>
-        <h2>Balance: ${balance}</h2>
+      <Navbar setActiveSection={setActiveSection} userId={user?._id} />
 
-        <button className="send-money">Send Money</button>
-        <button className="deposit-money">Deposit Money</button>
+      {activeSection === "sendMoney" ? (
+        <SendMoney
+          setActiveSection={setActiveSection}
+          setBalance={setBalance}
+        />
+      ) : activeSection === "deposit" ? (
+        <Deposit setActiveSection={setActiveSection} setBalance={setBalance} />
+      ) : activeSection === "transactionHistory" ? (
+        <TransactionHistory setActiveSection={setActiveSection} />
+      ) : activeSection ==="profileSettings" ? (
+        <ProfileSettings userId={user?._id}/>
+      ) : (
+        // Default Dashboard View
+        <div className="dashboard-container">
+          {/* User Details (Hidden when a form is open) */}
+          <div className="details">
+            <h1>Welcome, {user?.name} </h1>
+            <p>Email: {user?.email}</p>
+          </div>
+          <div className="m-detail">
+            <p>Wallet ID: {user?._id}</p>
+            <h2>Balance: ${balance}</h2>
+          </div>
 
-        <h3>Transaction History</h3>
-        <ul>
-          {transactions.length > 0 ? (
-            transactions.map((tx, index) => (
-              <li key={index}>
-                {tx.type}: ${tx.amount} on{" "}
-                {new Date(tx.date).toLocaleDateString()}
-              </li>
-            ))
-          ) : (
-            <p>No transactions yet.</p>
-          )}
-        </ul>
-      </div>
+          {/* Dashboard Cards */}
+          <div className="card-container">
+            <div className="card" onClick={() => setActiveSection("sendMoney")}>
+              <FaMoneyBillWave className="icon" />
+              <p>Send Money</p>
+            </div>
+            <div className="card" onClick={() => setActiveSection("deposit")}>
+              <FaPiggyBank className="icon" />
+              <p>Deposit</p>
+            </div>
+            <div
+              className="card"
+              onClick={() => setActiveSection("transactionHistory")}
+            >
+              <FaMoneyBillTransfer className="icon" />
+              <p>Transaction History</p>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
