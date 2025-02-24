@@ -1,12 +1,15 @@
 const express = require("express");
-const multer = require("multer");
+const multer = require("multer"); //includes multers files
 const User = require("../models/User");
 const router = express.Router();
 
 // Multer Storage Configuration
-// Tells multer to store the uploaded file on the disk
+// Tells multer to directly store the uploaded file on the disk
 const storage = multer.diskStorage({
     // where the stored files should be stored
+           //cb: fxn used to pass values inside the storage config
+           //req: represent the HTTP request, details abt incoming request 
+           //file: represents the uploaded files
     destination:(req, file, cb)=>{
         cb(null, "uploads/")
     },

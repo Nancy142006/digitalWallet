@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const sendWelcomeEmail = require("./emailServices");
 
 const router = express.Router();
 
@@ -22,6 +23,8 @@ router.post("/signup", async (req, res) => {
     // create new user
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
+    
+    await sendWelcomeEmail(email,name);
 
     res.status(201).json({ message: "Signup successful. Please login." });
   } catch (error) {
@@ -100,13 +103,13 @@ router.get("/user/:id", async (req, res) => {
     const user = await User.findById(userId);
     return res.status(200).json({
       message:
-        "successfully found the user : behnchod le agyi teri profile lodu..",
+        "successfully found the user",
       user,
     });
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "server error : gand marwao behnchod!", error });
+      .json({ message: "server error", error });
   }
 });
 
