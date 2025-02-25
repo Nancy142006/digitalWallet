@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Transaction = require("../models/TransactionSchema");
+const {sendOTP, verifyOTP} = require("./emailServices")
 
 const router = express.Router();
 
@@ -44,7 +45,7 @@ router.post("/deposit", authenticateUser, async (req, res) => {
 // Send Money API
 router.post("/send-money", authenticateUser, async (req, res) => {
   try {
-    const { email, amount } = req.body;
+    const { email, amount, otp } = req.body;
     if (amount <= 0) return res.status(400).json({ message: "Invalid amount" });
 
     const sender = await User.findById(req.userId);
@@ -54,6 +55,10 @@ router.post("/send-money", authenticateUser, async (req, res) => {
       return res.status(404).json({ message: "Receiver not found" });
     if (sender.balance < amount)
       return res.status(400).json({ message: "Insufficient balance" });
+
+    // verify OTP
+    const isOptValid = verifyOTP(sender.email, otp);
+    if(!isOtpValid) return res.status(400).json({message:"Invalid or expired OTP"})
 
     // Update balances
     sender.balance -= amount;
@@ -76,6 +81,18 @@ router.post("/send-money", authenticateUser, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/request-otp", authenticateUser, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    await sendOTP(user.email);
+    res.json({ message: "OTP sent to your email" });
+  } catch (error) {
+    res.status(500).json({ message: "Error sending OTP" });
   }
 });
 

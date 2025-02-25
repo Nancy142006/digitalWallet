@@ -9,8 +9,24 @@ function SendMoney({ setActiveSection, setBalance}) {
   // Accept setBalance prop
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
+  const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   // const navigate = useNavigate();
+
+  const requestOTP= async () =>{
+    try{
+      const token = localStorage.getItem("token");
+      await axios.post("http://localhost:5000/api/request-otp",
+        {},
+        {headers:{ Authorization:`Bearer ${token}`}}
+      );
+      setOtpSent(true);
+      setMessage("OTP sent to your email.");
+    }catch(error){
+      setMessage(error.response?.data?.message || "Failed to send OTP");
+    }
+  };
 
   const handleSendMoney = async (e) => {
     e.preventDefault();
@@ -18,7 +34,7 @@ function SendMoney({ setActiveSection, setBalance}) {
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:5000/api/send-money",
-        { email, amount: Number(amount) },
+        { email, amount: Number(amount), otp },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -28,6 +44,7 @@ function SendMoney({ setActiveSection, setBalance}) {
         setMessage(response.data.message);
         setAmount("");
         setEmail("");
+        setOtp("");
         setTimeout(() => setActiveSection("dashboard"), 1000);
     } catch (error) {
       console.error("Error:", error.response?.data);
@@ -37,7 +54,6 @@ function SendMoney({ setActiveSection, setBalance}) {
 
   return (
     <>
-    
       <div className="sendmoney-container">
         <h2>Send Money</h2>
         {message && <p>{message}</p>}
@@ -56,7 +72,22 @@ function SendMoney({ setActiveSection, setBalance}) {
             onChange={(e) => setAmount(e.target.value)}
             required
           />
-          <button type="submit">Send Money</button>
+          {otpSent && (
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={setOtp(e.target.value)}
+              required
+            />
+          )}
+          {!otpSent ? (
+            <button type="button" onClick={requestOTP}>
+              Request OTP
+            </button>
+          ) : (
+            <button type="submit">Send Money</button>
+          )}
         </form>
       </div>
       <Footer />

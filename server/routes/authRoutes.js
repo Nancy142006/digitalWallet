@@ -24,7 +24,7 @@ router.post("/signup", async (req, res) => {
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
     
-    await sendWelcomeEmail(email,name);
+    await sendWelcomeEmail(email, name);
 
     res.status(201).json({ message: "Signup successful. Please login." });
   } catch (error) {
