@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Transaction = require("../models/TransactionSchema");
-const {sendOTP, verifyOTP} = require("./emailServices")
+const {sendOTPEmail} = require("./emailServices")
 
 const router = express.Router();
 
@@ -42,6 +42,28 @@ router.post("/deposit", authenticateUser, async (req, res) => {
   }
 });
 
+let otpStore = {}; // Temporary storage (Use DB like MongoDB/Redis for production)
+
+router.post("/request-otp", authenticateUser, async (req, res) => {
+  try {
+    const sender = await User.findById(req.userId);
+    if (!sender) return res.status(404).json({ message: "User not found" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+    otpStore[sender.email] = otp; // Store OTP for the sender
+  console.log(`Generated OTP for ${sender.email}:`, otp);
+    await sendOTPEmail(sender.email, otp); // ✅ Send OTP to the sender’s email
+    console.log(`OTP sent to ${sender.email}`);
+
+    res.json({ message: "OTP sent to your email" });
+  } catch (error) {
+    console.error(" Error sending OTP:", error);
+    res.status(500).json({ message: "Error sending OTP" });
+  }
+});
+
+
+
 // Send Money API
 router.post("/send-money", authenticateUser, async (req, res) => {
   try {
@@ -51,14 +73,17 @@ router.post("/send-money", authenticateUser, async (req, res) => {
     const sender = await User.findById(req.userId);
     const receiver = await User.findOne({ email });
 
+    if (!otpStore[sender.email] || otpStore[sender.email] !== Number(otp)) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    // OTP is correct! Now, continue with money transfer logic...
+    delete otpStore[sender.email]; 
+
     if (!receiver)
       return res.status(404).json({ message: "Receiver not found" });
     if (sender.balance < amount)
       return res.status(400).json({ message: "Insufficient balance" });
-
-    // verify OTP
-    const isOptValid = verifyOTP(sender.email, otp);
-    if(!isOtpValid) return res.status(400).json({message:"Invalid or expired OTP"})
 
     // Update balances
     sender.balance -= amount;
@@ -84,17 +109,6 @@ router.post("/send-money", authenticateUser, async (req, res) => {
   }
 });
 
-router.post("/request-otp", authenticateUser, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    await sendOTP(user.email);
-    res.json({ message: "OTP sent to your email" });
-  } catch (error) {
-    res.status(500).json({ message: "Error sending OTP" });
-  }
-});
 
 // Get transaction history for logged-in user
 router.get(

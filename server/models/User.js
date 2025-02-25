@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "../images/icons8-avatar-50.png",
   },
-  
+  otp: { type: Number, default: null },
+  otpExpiration: { type: Date, default: null },
 });
 
 module.exports = mongoose.model("User", UserSchema);

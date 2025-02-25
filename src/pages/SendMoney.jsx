@@ -14,24 +14,26 @@ function SendMoney({ setActiveSection, setBalance}) {
   const [otpSent, setOtpSent] = useState(false);
   // const navigate = useNavigate();
 
-  const requestOTP= async () =>{
-    try{
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/request-otp",
-        {},
-        {headers:{ Authorization:`Bearer ${token}`}}
+  const token = localStorage.getItem("token");
+
+  //  Request OTP Function
+  const requestOTP = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5000/api/request-otp",
+        {email},
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setOtpSent(true);
-      setMessage("OTP sent to your email.");
-    }catch(error){
-      setMessage(error.response?.data?.message || "Failed to send OTP");
+      setMessage("✅ OTP sent to your email.");
+    } catch (error) {
+      setMessage(error.response?.data?.message || "❌ Failed to send OTP");
     }
   };
 
   const handleSendMoney = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:5000/api/send-money",
         { email, amount: Number(amount), otp },
@@ -40,12 +42,13 @@ function SendMoney({ setActiveSection, setBalance}) {
 
       console.log("Response from server:", response.data);
 
-        setBalance(response.data.newbalance); 
-        setMessage(response.data.message);
-        setAmount("");
-        setEmail("");
-        setOtp("");
-        setTimeout(() => setActiveSection("dashboard"), 1000);
+      setBalance(response.data.newbalance);
+      setMessage(response.data.message);
+      setAmount("");
+      setEmail("");
+      setOtp("");
+       setOtpSent(false); 
+      setTimeout(() => setActiveSection("dashboard"), 1000);
     } catch (error) {
       console.error("Error:", error.response?.data);
       setMessage(error.response?.data?.message || "Transaction failed");
@@ -77,7 +80,7 @@ function SendMoney({ setActiveSection, setBalance}) {
               type="text"
               placeholder="Enter OTP"
               value={otp}
-              onChange={setOtp(e.target.value)}
+              onChange={(e) => setOtp(e.target.value)}/*{setOtp(e.target.value)}*/
               required
             />
           )}
