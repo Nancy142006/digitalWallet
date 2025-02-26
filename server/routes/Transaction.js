@@ -3,7 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Transaction = require("../models/TransactionSchema");
-const {sendOTPEmail} = require("./emailServices")
+const { sendOTPEmail } = require("./emailServices");
+const receiptRouter = require("./Receipt");
+const axios = require("axios");
 
 const router = express.Router();
 
@@ -51,7 +53,8 @@ router.post("/request-otp", authenticateUser, async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
     otpStore[sender.email] = otp; // Store OTP for the sender
-  console.log(`Generated OTP for ${sender.email}:`, otp);
+    console.log("otp : ", otp);
+    console.log(`Generated OTP for ${sender.email}:`, otp);
     await sendOTPEmail(sender.email, otp); // ✅ Send OTP to the sender’s email
     console.log(`OTP sent to ${sender.email}`);
 
@@ -61,8 +64,6 @@ router.post("/request-otp", authenticateUser, async (req, res) => {
     res.status(500).json({ message: "Error sending OTP" });
   }
 });
-
-
 
 // Send Money API
 router.post("/send-money", authenticateUser, async (req, res) => {
@@ -78,7 +79,7 @@ router.post("/send-money", authenticateUser, async (req, res) => {
     }
 
     // OTP is correct! Now, continue with money transfer logic...
-    delete otpStore[sender.email]; 
+    delete otpStore[sender.email];
 
     if (!receiver)
       return res.status(404).json({ message: "Receiver not found" });
@@ -92,13 +93,19 @@ router.post("/send-money", authenticateUser, async (req, res) => {
     await receiver.save();
 
     // Record transaction
-    await Transaction.create({
+    const transaction = await Transaction.create({
       senderId: sender._id,
       recieverId: receiver._id,
       amount,
       type: "send",
     });
 
+    try {
+      await axios.get(`http://localhost:5000/api/receipt/${transaction._id}`);
+    } catch (receiptError) {
+      console.error("Error generating receipt:", receiptError);
+    }
+    // await axios.get(`http://localhost:5000/api/receipt/${transaction_id}`);
     res.json({
       success: true,
       message: "Money sent successfully",
@@ -108,7 +115,6 @@ router.post("/send-money", authenticateUser, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // Get transaction history for logged-in user
 router.get(
@@ -126,14 +132,14 @@ router.get(
           { senderId: userId },
           { recieverId: userId },
         ],
-      }) 
+      })
 
-      // replaces the senderId and recieverId with actual user detail
+        // replaces the senderId and recieverId with actual user detail
         .populate("senderId", "name email")
         .populate("recieverId", "name email")
         .sort({ timestamp: -1 }); //sorts the transactions in descending order
 
-      res.json(transactions); 
+      res.json(transactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
       res.status(500).json({ message: "Server error" });

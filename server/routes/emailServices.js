@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 // Function to send a welcome email
 const sendWelcomeEmail = async (userEmail, userName) => {
   try {
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: `"Your Digital Wallet" <${process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: "Welcome to Digital Wallet",
@@ -22,7 +22,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
              <p>Start exploring your digital wallet today!</p>
              <p>Best Regards, <br/> Digital Wallet Team</p>`,
     });
-    console.log("Welcome email sent successfully");
+    console.log("Welcome email sent successfully", info.response);
   } catch (error) {
     console.error("Error sending email:", error);
   }

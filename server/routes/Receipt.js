@@ -2,6 +2,9 @@ const express = require("express");
 const PDFDocument = require("pdfkit");
 const Transaction = require("../models/TransactionSchema");
 const User = require("../models/User");
+const nodemailer = require("nodemailer");
+const { Readable } = require("stream");
+require("dotenv").config();
 
 const router = express.Router();
 
@@ -20,13 +23,28 @@ router.get("/receipt/:transactionId", async (req, res) => {
 
     // Create a PDF document
     const doc = new PDFDocument();
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `inline; filename="receipt_${transactionId}.pdf"`
-    );
+    let buffers = [];
+    doc.on("data", buffers.push.bind(buffers));
+    doc.on("end", async () => {
+      const pdfData = Buffer.concat(buffers);
 
-    doc.pipe(res);
+      // send email with PDF attachment
+      await sendReceiptEmail(
+        transaction.senderId.email,
+        pdfData,
+        transactionId
+      );
+
+      // respond with the PDF for viewing and downloading
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `inline; filename="receipt_${transactionId}.pdf"`
+      );
+      res.send(pdfData);
+    });
+
+    // doc.pipe(res);
 
     // Add receipt details
     doc.fontSize(20).text("Transaction Receipt", { align: "center" });
@@ -50,5 +68,36 @@ router.get("/receipt/:transactionId", async (req, res) => {
     res.status(500).json({ message: "Error generating receipt" });
   }
 });
+
+const sendReceiptEmail = async (recipientEmail, pdfBuffer, transactionId) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: recipientEmail,
+      subject: "Transaction Receipt",
+      text: `Here is your transaction receipt for transaction ID: ${transactionId}`,
+      attachments: [
+        {
+          filename: `receipt_${transactionId}.pdf`,
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Receipt email sent successfully!", info.response);
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
 
 module.exports = router;

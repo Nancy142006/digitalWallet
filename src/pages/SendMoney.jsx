@@ -25,9 +25,9 @@ function SendMoney({ setActiveSection, setBalance}) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setOtpSent(true);
-      setMessage("✅ OTP sent to your email.");
+      setMessage(" OTP sent to your email.");
     } catch (error) {
-      setMessage(error.response?.data?.message || "❌ Failed to send OTP");
+      setMessage(error.response?.data?.message || " Failed to send OTP");
     }
   };
 

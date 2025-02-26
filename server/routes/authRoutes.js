@@ -2,7 +2,8 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const sendWelcomeEmail = require("./emailServices");
+const {sendWelcomeEmail} = require("./emailServices");
+require("dotenv").config();
 
 const router = express.Router();
 
@@ -23,8 +24,14 @@ router.post("/signup", async (req, res) => {
     // create new user
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
-    
-    await sendWelcomeEmail(email, name);
+
+    // Send welcome email
+    try {
+      await sendWelcomeEmail(newUser.email, newUser.name);
+      console.log("Welcome email sent successfully!");
+    } catch (emailError) {
+      console.error("Error sending welcome email:", emailError);
+    }
 
     res.status(201).json({ message: "Signup successful. Please login." });
   } catch (error) {
