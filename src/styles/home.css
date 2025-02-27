@@ -3,7 +3,6 @@
   margin: 0;
   text-align: center;
   font-family: Arial, sans-serif;
-  background-color: #e5eaf5;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -28,6 +27,7 @@ header h1 {
 .info-section h2 {
   color: #007bff;
 }
+
 
 p{
   color: #494d5f;

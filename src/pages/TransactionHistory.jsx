@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/transactionhistory.css";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 const TransactionHistory = ({ setActiveSection }) => {
@@ -35,26 +35,26 @@ const TransactionHistory = ({ setActiveSection }) => {
   }, []);
 
   // Handle scrolling effect
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > lastScrollY) {
-        setShowNavbar(false); // Hide navbar when scrolling down
-      } else {
-        setShowNavbar(true); // Show navbar when scrolling up
-      }
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     if (window.scrollY > lastScrollY) {
+  //       setShowNavbar(false); // Hide navbar when scrolling down
+  //     } else {
+  //       setShowNavbar(true); // Show navbar when scrolling up
+  //     }
 
-      if (window.scrollY < lastScrollY) {
-        setShowFooter(false); // Hide footer when scrolling up
-      } else {
-        setShowFooter(true); // Show footer when scrolling down
-      }
+  //     if (window.scrollY < lastScrollY) {
+  //       setShowFooter(false); // Hide footer when scrolling up
+  //     } else {
+  //       setShowFooter(true); // Show footer when scrolling down
+  //     }
 
-      lastScrollY = window.scrollY;
-    };
+  //     lastScrollY = window.scrollY;
+  //   };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, []);
 
   // Handle PDF Download
   const handleDownload = async (transactionId) => {
@@ -137,7 +137,7 @@ const TransactionHistory = ({ setActiveSection }) => {
         )}
       </div>
 
-      {showFooter && <Footer />}
+      {/* {showFooter && <Footer />} */}
     </>
   );
 };

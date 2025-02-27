@@ -33,10 +33,10 @@ function Signup() {
   return (
     <div className="signup-container">
       <div className="signup-card">
-        <h2>Sign Up</h2>
+        <h2 className="title">Sign Up</h2>
         {message && <p className="message">{message}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="input-group">
             <label htmlFor="name">Name</label>
             <input
               type="text"
@@ -47,7 +47,7 @@ function Signup() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="input-group">
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -58,7 +58,7 @@ function Signup() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="input-group">
             <label htmlFor="password">Password</label>
             <input
               type="password"
@@ -69,11 +69,11 @@ function Signup() {
               required
             />
           </div>
-          <button type="submit" className="signup-button" disabled={isLoading}>
+          <button type="submit" className="signup-btn" disabled={isLoading}>
             {isLoading ? <div className="spinner"></div> : "Sign Up"}
           </button>
         </form>
-        <p>
+        <p className="login">
           Already have an account? <Link to="/login">Login</Link>
         </p>
       </div>

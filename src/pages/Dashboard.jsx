@@ -2,7 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Footer from "../components/Footer";
 import "../styles/dashboard.css";
 import { FaMoneyBillWave, FaPiggyBank } from "react-icons/fa";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
@@ -68,61 +67,63 @@ function Dashboard() {
 
   return (
     <>
-      {/* Pass setActiveSection to Navbar */}
+      {/* ✅ Navbar Always Visible */}
       <Navbar
         setActiveSection={setActiveSection}
         userId={user?._id}
         refreshTrigger={refreshTrigger}
       />
 
-      {/* Render Components Based on activeSection */}
-      {activeSection === "sendMoney" ? (
-        <SendMoney
-          setActiveSection={setActiveSection}
-          setBalance={setBalance}
-        />
-      ) : activeSection === "deposit" ? (
-        <Deposit setActiveSection={setActiveSection} setBalance={setBalance} />
-      ) : activeSection === "transactionHistory" ? (
-        <TransactionHistory setActiveSection={setActiveSection} />
-      ) : activeSection === "profileSettings" ? (
-        <ProfileSettings
-          userId={user?._id}
-          onProfileUpdate={() => setRefreshTrigger((prev) => prev + 1)}
-        />
-      ) : (
-        // Default Dashboard View
-        <div className="dashboard-container">
-          <div className="details">
-            <h1>Welcome, {user?.name} </h1>
-            <p>Email: {user?.email}</p>
-          </div>
-          <div className="m-detail">
-            <p>Wallet ID: {user?._id}</p>
-            <h2>Balance: ${balance}</h2>
-          </div>
+      {/* ✅ Conditionally Render Sections */}
+      <div className="content-container">
+        {activeSection === "sendMoney" ? (
+          <SendMoney
+            setActiveSection={setActiveSection}
+            setBalance={setBalance}
+          />
+        ) : activeSection === "deposit" ? (
+          <Deposit
+            setActiveSection={setActiveSection}
+            setBalance={setBalance}
+          />
+        ) : activeSection === "transactionHistory" ? (
+          <TransactionHistory setActiveSection={setActiveSection} />
+        ) : (
+          // ✅ Default Dashboard View
+          <div className="dashboard-container">
+            <div className="details">
+              <h1>Welcome, {user?.name}</h1>
+              <p>Email: {user?.email}</p>
+            </div>
+            <div className="m-detail">
+              <p>Wallet ID: {user?._id}</p>
+              <h2>Balance: ${balance}</h2>
+            </div>
 
-          {/* Dashboard Cards */}
-          <div className="card-container">
-            <div className="card" onClick={() => setActiveSection("sendMoney")}>
-              <FaMoneyBillWave className="icon" />
-              <p>Send Money</p>
-            </div>
-            <div className="card" onClick={() => setActiveSection("deposit")}>
-              <FaPiggyBank className="icon" />
-              <p>Deposit</p>
-            </div>
-            <div
-              className="card"
-              onClick={() => setActiveSection("transactionHistory")}
-            >
-              <FaMoneyBillTransfer className="icon" />
-              <p>Transaction History</p>
+            {/* ✅ Dashboard Cards */}
+            <div className="card-container">
+              <div
+                className="card"
+                onClick={() => setActiveSection("sendMoney")}
+              >
+                <FaMoneyBillWave className="icon" />
+                <p>Send Money</p>
+              </div>
+              <div className="card" onClick={() => setActiveSection("deposit")}>
+                <FaPiggyBank className="icon" />
+                <p>Deposit</p>
+              </div>
+              <div
+                className="card"
+                onClick={() => setActiveSection("transactionHistory")}
+              >
+                <FaMoneyBillTransfer className="icon" />
+                <p>Transaction History</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      <Footer />
+        )}
+      </div>
     </>
   );
 }

@@ -57,7 +57,7 @@ function Login() {
               required
             />
           </div>
-          <button type="submit" className="login" disabled={isLoading}>
+          <button type="submit" className="login-btn" disabled={isLoading}>
             {isLoading ? <div className="spinner"></div> : "Login"}
           </button>
         </form>
