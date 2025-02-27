@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/login.css"
+import "../styles/Log.css"
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -32,10 +32,10 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Login</h2>
+        <h2 className="title">Login</h2>
         {message && <p className="message">{message}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="input-group">
             <label htmlFor="email">Email</label>
             <input  
               type="email"
@@ -46,7 +46,7 @@ function Login() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="input-group">
             <label htmlFor="password">Password</label>
             <input
               type="password"
@@ -57,11 +57,11 @@ function Login() {
               required
             />
           </div>
-          <button type="submit" className="login-button" disabled={isLoading}>
+          <button type="submit" className="login" disabled={isLoading}>
             {isLoading ? <div className="spinner"></div> : "Login"}
           </button>
         </form>
-        <p>
+        <p className="signup">
             Don't have an account? <Link to= "/signup">Sign Up</Link>
         </p>
       </div>

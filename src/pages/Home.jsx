@@ -1,34 +1,12 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer"
+import Navbar from "../components/Navbar";
 import "../styles/home.css"; // Import CSS file
 
 function Home() {
-  const navigate = useNavigate();
-
   return (
+    <>
+    <Navbar/>
     <div className="home-container">
-      <nav className="navbar">
-        <h1>💰 Digital Wallet</h1>
-        <ul>
-          <li>
-            <button
-              onClick={() => navigate("/login")}
-              className="btn login-btn"
-            >
-              Login
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => navigate("/signup")}
-              className="btn signup-btn"
-            >
-              Sign Up
-            </button>
-          </li>
-        </ul>
-      </nav>
       <header>
         <h1>Digital Wallet</h1>
       </header>
@@ -41,9 +19,9 @@ function Home() {
             real-time balance tracking.
           </p>
         </section>
-        <Footer />
       </main>
     </div>
+    </>
   );
 }
 

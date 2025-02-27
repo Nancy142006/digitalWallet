@@ -16,7 +16,7 @@ function Dashboard() {
   const [user, setUser] = useState(null);
   const [balance, setBalance] = useState(0);
   const [activeSection, setActiveSection] = useState("dashboard");
-    const [refreshTrigger, setRefreshTrigger] = useState(0); 
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const navigate = useNavigate();
 
   // effect depends on navigate, meaning if navigate changes, the effect runs again
@@ -68,8 +68,14 @@ function Dashboard() {
 
   return (
     <>
-      <Navbar setActiveSection={setActiveSection} userId={user?._id} refreshTrigger={refreshTrigger} />
+      {/* Pass setActiveSection to Navbar */}
+      <Navbar
+        setActiveSection={setActiveSection}
+        userId={user?._id}
+        refreshTrigger={refreshTrigger}
+      />
 
+      {/* Render Components Based on activeSection */}
       {activeSection === "sendMoney" ? (
         <SendMoney
           setActiveSection={setActiveSection}
@@ -79,12 +85,14 @@ function Dashboard() {
         <Deposit setActiveSection={setActiveSection} setBalance={setBalance} />
       ) : activeSection === "transactionHistory" ? (
         <TransactionHistory setActiveSection={setActiveSection} />
-      ) : activeSection ==="profileSettings" ? (
-        <ProfileSettings userId={user?._id} onProfileUpdate={()=> setRefreshTrigger((prev)=> prev+1)}/>
+      ) : activeSection === "profileSettings" ? (
+        <ProfileSettings
+          userId={user?._id}
+          onProfileUpdate={() => setRefreshTrigger((prev) => prev + 1)}
+        />
       ) : (
         // Default Dashboard View
         <div className="dashboard-container">
-          {/* User Details (Hidden when a form is open) */}
           <div className="details">
             <h1>Welcome, {user?.name} </h1>
             <p>Email: {user?.email}</p>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/navbar.css";
+import "../styles/nav.css";
 
 function Navbar({ setActiveSection, userId, refreshTrigger }) {
   const navigate = useNavigate();
@@ -34,47 +34,61 @@ function Navbar({ setActiveSection, userId, refreshTrigger }) {
       <div className="Head">
         <h1>💰 Digital Wallet</h1>
       </div>
-      <ul>
-        <li>
-          <button
-            className="click"
-            onClick={() => setActiveSection("dashboard")}
-          >
-            Dashboard
-          </button>
-        </li>
-        <li>
-          <button
-            className="click"
-            onClick={() => setActiveSection("sendMoney")}
-          >
-            Send Money
-          </button>
-        </li>
-        <li>
-          <button className="click" onClick={() => setActiveSection("deposit")}>
-            Deposit
-          </button>
-        </li>
-        <li>
-          <img
-            src={
-              user
-                ? `http://localhost:5000/${user.profilePicture}`
-                : "/default-avatar.png"
-            }
-            alt="Profile"
-            className="profile-avatar"
-            onClick={() => setActiveSection("profileSettings")}
-            style={{ cursor: "pointer" }}
-          />
-        </li>
-        <li>
-          <button className="btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </li>
-      </ul>
+      <div className="button-container">
+        <ul>
+          {userId ? (
+            <>
+              <li>
+                <button onClick={() => setActiveSection("dashboard")}>
+                  Dashboard
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveSection("sendMoney")}
+                >
+                  Send Money
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => setActiveSection("deposit")}
+                >
+                  Deposit
+                </button>
+              </li>
+
+              <li>
+                <button className="btn" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+              <li>
+                <img
+                  src={
+                    user
+                      ? `http://localhost:5000/${user.profilePicture}`
+                      : "/default-avatar.png"
+                  }
+                  alt="Profile"
+                  className="profile-avatar"
+                  onClick={() => setActiveSection("profileSettings")}
+                  style={{ cursor: "pointer" }}
+                />
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <button onClick={() => navigate("/signin")}>Sign In</button>
+              </li>
+              <li>
+                <button onClick={() => navigate("/login")}>Login</button>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
     </nav>
   );
 }
