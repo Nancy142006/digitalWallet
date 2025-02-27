@@ -4,8 +4,7 @@ import axios from "axios";
 import "../styles/sendmoney.css";
 import Footer from "../components/Footer";
 
-
-function SendMoney({ setActiveSection, setBalance}) {
+const SendMoney = ({ setActiveSection, setBalance }) => {
   // Accept setBalance prop
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
@@ -21,7 +20,7 @@ function SendMoney({ setActiveSection, setBalance}) {
     try {
       await axios.post(
         "http://localhost:5000/api/request-otp",
-        {email},
+        { email },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setOtpSent(true);
@@ -47,7 +46,7 @@ function SendMoney({ setActiveSection, setBalance}) {
       setAmount("");
       setEmail("");
       setOtp("");
-       setOtpSent(false); 
+      setOtpSent(false);
       setTimeout(() => setActiveSection("dashboard"), 1000);
     } catch (error) {
       console.error("Error:", error.response?.data);
@@ -80,14 +79,14 @@ function SendMoney({ setActiveSection, setBalance}) {
               type="text"
               placeholder="Enter OTP"
               value={otp}
-              onChange={(e) => setOtp(e.target.value)}/*{setOtp(e.target.value)}*/
+              onChange={(e) =>
+                setOtp(e.target.value)
+              } /*{setOtp(e.target.value)}*/
               required
             />
           )}
           {!otpSent ? (
-            <button type="button" onClick={requestOTP}>
-              Request OTP
-            </button>
+            <button onClick={requestOTP}>Request OTP</button>
           ) : (
             <button type="submit">Send Money</button>
           )}
@@ -96,6 +95,6 @@ function SendMoney({ setActiveSection, setBalance}) {
       <Footer />
     </>
   );
-}
+};
 
 export default SendMoney;

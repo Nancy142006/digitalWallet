@@ -25,7 +25,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path="/deposit"
           element={
             <ProtectedRoute>
@@ -40,7 +40,7 @@ function App() {
               <SendMoney />
             </ProtectedRoute>
           }
-        />
+        /> */}
       </Routes>
     </BrowserRouter>
   );
