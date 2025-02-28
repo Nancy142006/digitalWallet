@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../styles/deposit.css"
-import Footer from "../components/Footer";
-
 
 function Deposit({setActiveSection, setBalance}) {
   const [amount, setAmount] = useState("");
@@ -42,7 +40,6 @@ function Deposit({setActiveSection, setBalance}) {
         </form>
         
       </div>
-      <Footer />
     </>
   );
 }

@@ -8,9 +8,9 @@ const TransactionHistory = ({ setActiveSection }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [showNavbar, setShowNavbar] = useState(true);
-  const [showFooter, setShowFooter] = useState(true);
-  let lastScrollY = window.scrollY;
+  // const [showNavbar, setShowNavbar] = useState(true);
+  // const [showFooter, setShowFooter] = useState(true);
+  // let lastScrollY = window.scrollY;
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -83,7 +83,7 @@ const TransactionHistory = ({ setActiveSection }) => {
 
   return (
     <>
-      {showNavbar && <Navbar setActiveSection={setActiveSection} />}
+     {/* <Navbar setActiveSection={setActiveSection} /> */}
 
       <div className="transaction-history">
         <h2>Transaction History</h2>

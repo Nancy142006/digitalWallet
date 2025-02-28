@@ -2,7 +2,6 @@ import React, { useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/sendmoney.css";
-import Footer from "../components/Footer";
 
 const SendMoney = ({ setActiveSection, setBalance }) => {
   // Accept setBalance prop
@@ -11,12 +10,14 @@ const SendMoney = ({ setActiveSection, setBalance }) => {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [loading, setLoading] = useState(false);
   // const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
   //  Request OTP Function
   const requestOTP = async () => {
+    setLoading(true);
     try {
       await axios.post(
         "http://localhost:5000/api/request-otp",
@@ -28,10 +29,12 @@ const SendMoney = ({ setActiveSection, setBalance }) => {
     } catch (error) {
       setMessage(error.response?.data?.message || " Failed to send OTP");
     }
+    setLoading(false);
   };
 
   const handleSendMoney = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:5000/api/send-money",
@@ -52,6 +55,7 @@ const SendMoney = ({ setActiveSection, setBalance }) => {
       console.error("Error:", error.response?.data);
       setMessage(error.response?.data?.message || "Transaction failed");
     }
+    setLoading(false);
   };
 
   return (
@@ -79,20 +83,23 @@ const SendMoney = ({ setActiveSection, setBalance }) => {
               type="text"
               placeholder="Enter OTP"
               value={otp}
-              onChange={(e) =>
-                setOtp(e.target.value)
-              } /*{setOtp(e.target.value)}*/
+              onChange={(e) => setOtp(e.target.value)}
               required
             />
           )}
           {!otpSent ? (
-            <button onClick={requestOTP}>Request OTP</button>
+            <button type="button" onClick={requestOTP} disabled={loading}>
+              {loading ? "Requesting OTP..." : "Request OTP"}
+            </button>
           ) : (
-            <button type="submit">Send Money</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Processing..." : "Send Money"}
+            </button>
           )}
         </form>
+
+        {loading && <div className="loader"></div>}
       </div>
-      <Footer />
     </>
   );
 };

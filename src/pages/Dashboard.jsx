@@ -82,7 +82,10 @@ function Dashboard() {
       ) : activeSection === "deposit" ? (
         <Deposit setActiveSection={setActiveSection} setBalance={setBalance} />
       ) : activeSection === "transactionHistory" ? (
-        <TransactionHistory setActiveSection={setActiveSection} />
+        <TransactionHistory
+          setActiveSection={setActiveSection}
+          refreshTrigger={refreshTrigger}
+        />
       ) : activeSection === "profileSettings" ? (
         <ProfileSettings
           userId={user?._id}
