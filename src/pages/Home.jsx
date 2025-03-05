@@ -14,7 +14,7 @@ function Home() {
         <div className="button-container">
           <ul>
             <li>
-              <button onClick={() => navigate("/signin")}>Sign In</button>
+              <button onClick={() => navigate("/signup")}>Sign In</button>
             </li>
             <li>
               <button onClick={() => navigate("/login")}>Login</button>
